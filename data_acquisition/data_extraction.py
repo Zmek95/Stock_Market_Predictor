@@ -27,15 +27,14 @@ def download_kaggle_dataset(dataset_url: string, path: Path) -> None:
 def combine_exchange_data(data_path: Path) -> pd.DataFrame:
     etf_path = data_path / 'etfs'
     stock_path = data_path / 'stocks'
-    symbol_paths = []
+    symbol_paths, symbol_dfs = [], []
+    dtype_setter = {'Symbol': 'string', 'Security Name': 'string', 'Date': 'string', 'Volume': 'int64'}
 
     for directory in [etf_path, stock_path]:
         for file in directory.iterdir():
             if file.is_file():
                 symbol_paths.append(file)
     
-    symbol_dfs = []
-
     for symbol_path in symbol_paths:
         df = pd.read_csv(symbol_path)
         df['Symbol'] = symbol_path.name[:-4]
@@ -44,5 +43,4 @@ def combine_exchange_data(data_path: Path) -> pd.DataFrame:
     df_combined_symbols = pd.concat(symbol_dfs, ignore_index=True)
     del symbol_dfs
     df_labels = pd.read_csv(data_path / 'symbols_valid_meta.csv')[['Symbol', 'Security Name']]
-    
-    return df_labels.merge(df_combined_symbols, how='left', on='Symbol')
+    return df_labels.merge(df_combined_symbols, how='left', on='Symbol').dropna().astype(dtype_setter)
