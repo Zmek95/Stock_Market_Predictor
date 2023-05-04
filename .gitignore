@@ -3,4 +3,6 @@ __pycache__/
 *.ipynb_checkpoints
 data_acquisition/data/*
 !data_acquisition/data/.gitkeep
+data_processing/data/*
+!data_processing/data/.gitkeep
 kaggle.json
