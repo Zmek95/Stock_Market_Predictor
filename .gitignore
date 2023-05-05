@@ -6,3 +6,4 @@ data_acquisition/data/*
 data_processing/data/*
 !data_processing/data/.gitkeep
 kaggle.json
+mlruns/
