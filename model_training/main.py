@@ -70,7 +70,7 @@ if __name__== '__main__':
         pprint(data)
     
     path = get_project_root() / 'model_training'
-    dump(model, 'SGDRegressor.joblib')
+    dump(model, model / 'SGDRegressor.joblib')
 
     # Make predictions on test data
     y_pred = model.predict(X_test)
