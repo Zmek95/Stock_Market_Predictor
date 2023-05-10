@@ -11,6 +11,8 @@ from pyprojroot import here as get_project_root
 os.chdir(get_project_root())
 sys.path.append(str(get_project_root()))
 
+import data_acquisition.config as cfg
+
 
 def download_kaggle_dataset(dataset_url: string, path: Path) -> None:
     api = KaggleApi()
@@ -19,7 +21,7 @@ def download_kaggle_dataset(dataset_url: string, path: Path) -> None:
     api.dataset_download_files(dataset_url, path=path)
     print('Download complete!\nUnpacking archive...')
 
-    with zipfile.ZipFile(path / 'stock-market-dataset.zip','r') as zip_ref:
+    with zipfile.ZipFile(path / cfg.DATA_ARCHIVE_NAME,'r') as zip_ref:
         zip_ref.extractall(path=path)
     print('Extraction succesful!')
 
@@ -28,7 +30,7 @@ def combine_exchange_data(data_path: Path) -> pd.DataFrame:
     etf_path = data_path / 'etfs'
     stock_path = data_path / 'stocks'
     symbol_paths, symbol_dfs = [], []
-    dtype_setter = {'Symbol': 'string', 'Security Name': 'string', 'Date': 'string', 'Volume': 'int64'}
+    dtype_setter = cfg.DTYPE_SETTER
 
     for directory in [etf_path, stock_path]:
         for file in directory.iterdir():
@@ -42,5 +44,5 @@ def combine_exchange_data(data_path: Path) -> pd.DataFrame:
 
     df_combined_symbols = pd.concat(symbol_dfs, ignore_index=True)
     del symbol_dfs
-    df_labels = pd.read_csv(data_path / 'symbols_valid_meta.csv')[['Symbol', 'Security Name']]
+    df_labels = pd.read_csv(data_path / cfg.SYMBOL_METADATA)[cfg.METADATA_FEATURES]
     return df_labels.merge(df_combined_symbols, how='left', on='Symbol').dropna().astype(dtype_setter)
