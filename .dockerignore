@@ -1,0 +1,9 @@
+airflow/*
+**/data
+app.py
+.git
+.gitignore
+**/__pycache__
+*.ipynb
+*.ipynb_checkpoints
+mlruns/*

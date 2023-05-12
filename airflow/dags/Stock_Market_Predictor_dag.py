@@ -4,8 +4,15 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from pyprojroot import here as get_project_root
-os.chdir(get_project_root())
-sys.path.append(str(get_project_root()))
+
+# Docker container check
+# container DAG files are stored in opt/airflow/dags
+if get_project_root() == '/':
+    os.chdir(get_project_root() / 'src')
+    sys.path.append(str(get_project_root() / 'src'))
+else:
+    os.chdir(get_project_root())
+    sys.path.append(str(get_project_root()))
 
 # function imports
 from data_acquisition.main import main as data_aq_main
